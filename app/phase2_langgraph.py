@@ -1,3 +1,7 @@
+"""
+This module implements the Phase 2 graph logic for the Cognitive Routing RAG system,
+"""
+
 from langgraph.graph import StateGraph, END
 
 from app.models import GraphState, SearchDecision, BotPost
@@ -10,6 +14,10 @@ llm = get_llm()
 planner_llm = llm.with_structured_output(SearchDecision, method="json_mode")
 
 def decide_search(graph_state: GraphState):
+    """
+    This node decides on a topic to post about and 
+    whether to perform a web search based on the bot's persona.
+    """
     prompt = f"""
             You are roleplaying the following persona:
 
@@ -29,6 +37,9 @@ def decide_search(graph_state: GraphState):
 
 #Node 2: Dummy web Search
 def web_search(state: GraphState):
+    """
+    This node performs a <dummy> web search based on the search query.
+    """
     result = mock_searxng_search.invoke(
         state["search_query"]
     )
@@ -40,7 +51,14 @@ def web_search(state: GraphState):
 writer_llm = llm.with_structured_output(
     BotPost, method="json_mode"
 )
+
 def draft_post(state: GraphState):
+    """
+    This node drafts a social media post based 
+     - bot's persona
+     - the chosen topic
+     - web search results.
+    """
     prompt = f"""
     You are permanently roleplaying this persona:
 
@@ -113,6 +131,9 @@ builder.add_edge(
 graph = builder.compile()
 
 def phase2_demo():
+    """
+    This function demonstrates the phase 2 graph logic.
+    """
     from app.personas import BOT_PERSONAS
     output = {}
     for i in BOT_PERSONAS:

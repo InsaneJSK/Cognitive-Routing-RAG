@@ -1,7 +1,14 @@
+"""
+This module defines test cases for the Cognitive Routing RAG system
+"""
+
 phase1_tests = [
-    "I think AI will revolutionize the world and we should embrace it. However, we should also be cautious about potential risks and ethical concerns.",
-    "Tech monopolies are exploiting user data while social media platforms destroy attention spans and personal privacy.",
-    "With the onset of AI, we can see the RoI in software development skyrocketing, with huge potential for economy to grow.",
+    "I think AI will revolutionize the world and we should embrace it.\
+          However, we should also be cautious about potential risks and ethical concerns.",
+    "Tech monopolies are exploiting user data while social media platforms\
+          destroy attention spans and personal privacy.",
+    "With the onset of AI, we can see the RoI in software development \
+        skyrocketing, with huge potential for economy to grow.",
 ]
 
 phase3_tests = [
@@ -14,7 +21,7 @@ phase3_tests = [
         "parent_post" : (
             "AI-generated software is going to destroy the job market "
             "and make human developers obsolete."
-        ), 
+        ),
         "comment_history" : [
             "Mass automation always creates more opportunity than it destroys.",
             "People said the same thing about the internet and smartphones.",

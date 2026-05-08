@@ -1,3 +1,7 @@
+"""
+This module implements the Phase 3 RAG logic for the Cognitive Routing RAG system,
+"""
+
 from app.utils import get_llm
 from app.testcases import phase3_tests
 
@@ -9,6 +13,9 @@ def generate_defense_reply(
     comment_history: list[str],
     human_reply: str,
 ):
+    """
+    This function generates a bot reply that defends the bot's position in an online debate thread
+    """
     thread_context = f"""
     Parent Post:
     {parent_post}
@@ -16,7 +23,7 @@ def generate_defense_reply(
     Comment History:
     """
     for comment in comment_history:
-        thread_context += f"\n- {comment}" 
+        thread_context += f"\n- {comment}"
     thread_context += f"""
     Latest Human Reply:
     {human_reply}
@@ -60,6 +67,7 @@ def generate_defense_reply(
     return response.content
 
 def phase3_demo():
+    """This function demonstrates the phase 3 RAG logic."""
     output = {}
     for i in range(0, 3):
         output[f"Test {i+1}"] = generate_defense_reply(**phase3_tests[i])

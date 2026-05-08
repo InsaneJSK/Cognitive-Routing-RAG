@@ -1,3 +1,9 @@
+"""
+This is the main entry point for running the Cognitive Routing RAG system.
+It orchestrates the execution of all three phases, collects results,
+and generates markdown logs for each phase.
+"""
+
 from pathlib import Path
 from datetime import datetime
 from typing import Any
@@ -8,15 +14,18 @@ from app.phase3_rag import phase3_demo
 from app.testcases import phase3_tests
 
 def get_timestamp():
+    """Returns a timestamp string for log file naming."""
     return datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 def write_markdown_log(filepath, title, content):
+    """Writes the given content to a markdown file with a title and timestamp."""
     with open(filepath, "w", encoding="utf-8") as f:
         f.write(f"# {title}\n\n")
         f.write(f"Generated: {datetime.now().isoformat(timespec='seconds')}\n\n")
         f.write(content)
 
 def render_phase1_markdown(phase1_results: dict[str, dict[str, Any]]) -> str:
+    """Renders the phase 1 results into a markdown string."""
     md = ""
     for test_name, result in phase1_results.items():
         md += f"## {test_name}\n\n"
@@ -37,6 +46,7 @@ def render_phase1_markdown(phase1_results: dict[str, dict[str, Any]]) -> str:
 
 
 def render_phase2_markdown(phase2_results: dict[str, dict[str, str]]) -> str:
+    """Renders the phase 2 results into a markdown string."""
     md = ""
     for _, result in phase2_results.items():
         md += f"## Bot ID: {result.get('bot_id', 'Unknown')}\n\n"
@@ -52,6 +62,9 @@ def render_phase3_markdown(
     phase3_results: dict[str, str],
     test_data: list[dict[str, Any]],
 ) -> str:
+    """
+    Renders the phase 3 results into a markdown string with test case details and bot responses.
+    """
     md = ""
     for idx, (test_name, bot_response) in enumerate(phase3_results.items()):
         test_case = test_data[idx] if idx < len(test_data) else {}
@@ -73,6 +86,7 @@ def render_phase3_markdown(
 
 
 def main():
+    """Main function to run all phases and generate logs."""
     timestamp = get_timestamp()
     run_dir = Path(f"logs/{timestamp}")
     run_dir.mkdir(parents=True, exist_ok=True)

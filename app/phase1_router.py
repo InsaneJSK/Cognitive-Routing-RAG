@@ -1,3 +1,7 @@
+"""
+This module implements the Phase 1 routing logic for the Cognitive Routing RAG system.
+"""
+
 import chromadb
 from sentence_transformers import SentenceTransformer
 from app.personas import BOT_PERSONAS
@@ -40,10 +44,15 @@ def route_post_to_bots(post_content: str, threshold: float = 0.4):
     for idx, distance in enumerate(results["distances"][0]):
         similarity = 1 - distance  # Convert cosine distance to similarity
         if similarity >= threshold:
-            matches.append((results["ids"][0][idx], results["metadatas"][0][idx]["name"], similarity))
+            matches.append(
+                (results["ids"][0][idx], results["metadatas"][0][idx]["name"], similarity)
+            )
     return matches
 
 def phase1_demo():
+    """
+    This function demonstrates the phase 1 routing logic.
+    """
     from app.testcases import phase1_tests
     upsert_personas()
     output = {}

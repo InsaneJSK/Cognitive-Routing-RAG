@@ -21,7 +21,7 @@ The system routes relevant content to ideological bot personas, generates autono
 | Workflow Orchestration | LangGraph |
 | Vector Database | ChromaDB |
 | Embedding Model | all-MiniLM-L6-v2 |
-| LLM Provider | Groq / OpenAI / Ollama |
+| LLM Provider | Groq |
 | Logging | Markdown-based timestamped execution logs |
 
 ---
@@ -115,7 +115,7 @@ Because of this:
 - thresholds were tuned empirically,
 - routing prioritizes relative ranking over absolute similarity values.
 
-Final working thresholds were significantly lower than the assignment's example threshold of `0.85`.
+Final working thresholds were significantly lower than the assignment's example threshold of `0.85`, for the iteration of the logs, the threshold was chosen to be `0.4`.
 
 ---
 
@@ -128,8 +128,6 @@ As a result:
 - mixed-sentiment prompts can confuse routing,
 - short personas reduce embedding richness,
 - semantic retrieval quality depends heavily on embedding model choice.
-
-These limitations are documented intentionally as realistic tradeoffs in lightweight semantic routing systems.
 
 ---
 
@@ -187,7 +185,6 @@ The tool returns hardcoded contextual headlines based on keywords such as:
 - crypto,
 - AI,
 - finance,
-- Elon Musk,
 - regulation,
 - markets.
 
@@ -310,10 +307,12 @@ Every run creates a dedicated folder:
 
 ```text
 logs/
-└── YYYY-MM-DD_HH-MM-SS/
-    ├── phase1.md
-    ├── phase2.md
-    └── phase3.md
+└──phase1
+   └──YYYY-MM-DDTHH-MM-SS.md
+└──phase2
+   └──YYYY-MM-DDTHH-MM-SS.md
+└──phase3
+   └──YYYY-MM-DDTHH-MM-SS.md
 ```
 
 This improves:
@@ -328,24 +327,23 @@ This improves:
 
 ```text
 Cognitive-Routing-RAG/
-│
 ├── app/
-│   ├── personas.py
+│   ├── __init__.py
 │   ├── models.py
-│   ├── tools.py
-│   ├── utils.py
+│   ├── personas.py
 │   ├── phase1_router.py
 │   ├── phase2_langgraph.py
-│   └── phase3_rag.py
-│
+│   ├── phase3_rag.py
+│   ├── testcases.py
+│   ├── tools.py
+│   └── utils.py
 ├── chroma_db/
-│
 ├── logs/
-│
-├── main.py
-├── requirements.txt
 ├── .env.example
-└── README.md
+├── .gitignore
+├── main.py
+├── README.md
+└── requirements.txt
 ```
 
 ---
@@ -355,7 +353,7 @@ Cognitive-Routing-RAG/
 ## Clone Repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/InsaneJSK/Cognitive-Routing-RAG
 cd Cognitive-Routing-RAG
 ```
 
@@ -403,7 +401,6 @@ Add your API keys:
 
 ```env
 GROQ_API_KEY=your_key_here
-OPENAI_API_KEY=your_key_here
 ```
 
 ---
@@ -475,6 +472,7 @@ Your New Age fantasies won't pay the bills. Focus on ROI, not inner peace.
 Potential improvements include:
 - larger embedding models,
 - hybrid sparse+dense retrieval,
+- stance detection models
 - memory persistence across conversations,
 - real search APIs,
 - multi-agent interaction graphs,

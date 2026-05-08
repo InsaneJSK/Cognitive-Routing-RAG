@@ -1,3 +1,7 @@
+"""
+This module defines the tools used in the Phase 2 graph, including a mocked web search function.
+"""
+
 from langchain.tools import tool
 
 @tool
