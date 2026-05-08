@@ -1,5 +1,5 @@
 from typing import TypedDict
-from pydantic import BaseModel
+from pydantic import AliasChoices, BaseModel, Field
 
 class GraphState(TypedDict):
     bot_id: str
@@ -13,9 +13,11 @@ class GraphState(TypedDict):
 
 class SearchDecision(BaseModel):
     topic: str
-    search_query: str
+    search_query: str = Field(
+        validation_alias=AliasChoices("search_query", "webSearchQuery", "web_search_query")
+    )
 
 class BotPost(BaseModel):
-    bot_id: str
-    topic: str
-    post_content: str
+    post_content: str = Field(
+        validation_alias=AliasChoices("post_content", "text", "content")
+    )

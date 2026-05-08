@@ -7,7 +7,7 @@ from app.utils import get_llm
 llm = get_llm()
 
 #Node 1: Decide Search
-planner_llm = llm.with_structured_output(SearchDecision)
+planner_llm = llm.with_structured_output(SearchDecision, method="json_mode")
 
 def decide_search(graph_state: GraphState):
     prompt = f"""
@@ -20,6 +20,8 @@ def decide_search(graph_state: GraphState):
             Generate:
             1. A concise topic
             2. A concise web search query
+
+            Return valid JSON only.
             """
     result = planner_llm.invoke(prompt)
     return {"topic": result.topic,
@@ -36,28 +38,38 @@ def web_search(state: GraphState):
 
 #Node 3: Draft Post
 writer_llm = llm.with_structured_output(
-    BotPost
+    BotPost, method="json_mode"
 )
 def draft_post(state: GraphState):
     prompt = f"""
-    You are roleplaying the following persona:
+    You are permanently roleplaying this persona:
+
     {state["persona"]}
 
-    Use this real-world context:
+    You are reacting to this real-world news:
+
     {state["search_results"]}
 
-    Write:
-    - a highly opinionated social media post
-    - under 280 characters
-    - aggressive and confident
-    - strongly aligned to the persona
+    Topic:
+    {state["topic"]}
 
-    Return valid JSON only.
+    Requirements:
+    - Strongly reference the news/context
+    - Sound like a real human with strong beliefs
+    - Stay highly aligned to the persona
+    - Under 280 characters
+    - No hashtags
+    - No emojis
+    - Avoid generic motivational language
+    - Make a concrete argument or prediction
+    - Don't just state an opinion, but also provide reasoning or evidence for it
+
+    Return a valid JSON object with exactly one key: "post_content".
+    Do not wrap it in markdown or code fences.
+    Example: {{"post_content": "..."}}
     """
     result = writer_llm.invoke(prompt)
     return {
-        "bot_id": state["bot_id"],
-        "topic": state["topic"],
         "post_content": result.post_content
     }
 
@@ -100,12 +112,23 @@ builder.add_edge(
 
 graph = builder.compile()
 
+def phase2_demo():
+    from app.personas import BOT_PERSONAS
+    output = {}
+    for i in BOT_PERSONAS:
+        initial_state = {
+        "bot_id": i["bot_id"],
+        "persona": i["persona"]
+        }
+        result = graph.invoke(initial_state)
+        final_output = {
+            "bot_id": result["bot_id"],
+            "topic": result["topic"],
+            "post_content": result["post_content"]
+        }
+        output[i['bot_id']] = final_output
+    return output
+
 if __name__ == "__main__":
-    initial_state = {
-    "bot_id": "Bot_A",
-    "persona": (
-        "I believe AI and crypto will solve "
-        "all human problems..."
-    )}
-    result = graph.invoke(initial_state)
-    print(result)
+    from pprint import pprint
+    pprint(phase2_demo())

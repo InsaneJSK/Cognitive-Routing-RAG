@@ -43,13 +43,18 @@ def route_post_to_bots(post_content: str, threshold: float = 0.4):
             matches.append((results["ids"][0][idx], results["metadatas"][0][idx]["name"], similarity))
     return matches
 
-if __name__ == "__main__":
+def phase1_demo():
+    from app.testcases import phase1_tests
     upsert_personas()
-    tests = [
-        "I think AI will revolutionize the world and we should embrace it. However, we should also be cautious about potential risks and ethical concerns.",
-        "Tech monopolies are exploiting user data while social media platforms destroy attention spans and personal privacy.",
-        "With the onset of AI, we can see the RoI in software development skyrocketing, with huge potential for economy to grow.",
-    ]
+    output = {}
+    for idx, test_post in enumerate(phase1_tests):
+        matches = route_post_to_bots(test_post)
+        output[f"Test Post {idx+1}"] = {
+            "content": test_post,
+            "matches": matches
+        }
+    return output
 
-    for test_post in tests:
-        print(f"{test_post}: {route_post_to_bots(test_post)}")
+if __name__ == "__main__":
+    from pprint import pprint
+    pprint(phase1_demo())
